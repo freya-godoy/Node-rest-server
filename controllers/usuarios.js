@@ -5,7 +5,6 @@ import { Usuario } from '../models/usuario.js'
 
 const usuariosGet = async (req = request, res = response) => {
 
-    // const { q, nombre = 'no name', apikey, page = 1, limit } = req.query;
     const { limite = 5, desde = 0 } = req.query;
     const query = { estado: true };
 
@@ -68,11 +67,22 @@ const usuariosPatch = (req, res = response) => {
 const usuariosDelete = async (req, res = response) => {
     const { id } = req.params
 
-    //borrar fisicamente el usuario
-    const usuario = await Usuario.findByIdAndDelete({estado : false});
+    const uid = req.uid;
 
-    res.json(usuario);
+    // borrar fisicamente el usuario de la base de datos
+    const usuario = await Usuario.findByIdAndDelete(id);
+
+    res.json({ usuario, uid });
 }
 
+const usuariosDisable = async (req, res = response) => {
+    const { id } = req.params
 
-export { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch }
+    // desactivar usuario para que no sea devuelto en aquellas consultas que requiren estado = true
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
+    const usuarioAutenticado = req.usuario;
+
+    res.json({ usuario, usuarioAutenticado });
+}
+
+export { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosDisable, usuariosPatch, }
