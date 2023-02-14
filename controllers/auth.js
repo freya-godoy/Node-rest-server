@@ -54,7 +54,7 @@ const googleSingIn = async (req, res = response) => {
 
         const { correo, nombre, img } = await googleVerify(id_token);
 
-        let usuario = await Usuario.findOne({ correo })
+        let usuario = await Usuario.findOne({ correo });
 
         if (!usuario) {
             // Tengo que crearlo
@@ -86,13 +86,13 @@ const googleSingIn = async (req, res = response) => {
         res.json({
             usuario,
             token
-        })
+        });
 
     } catch (error) {
-        json.status(400).json({
-            ok: false,
-            msg: 'El token no se pudo verificar'
-        });
+
+        res.status(400).json({
+            msg: 'Token de Google no es válido'
+        })
     }
 
 
